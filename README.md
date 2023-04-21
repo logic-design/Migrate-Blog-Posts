@@ -1,2 +1,1 @@
-# Migrate-Blog-Posts
-WordPress Plugin
+# WP Plugin: Migrate Blog Posts
