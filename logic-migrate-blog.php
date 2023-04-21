@@ -4,7 +4,7 @@
 * Description: Import posts from remote domain via the WordPress JSON API
 * Author: Logic Design & Consultancy Ltd
 * Author URI: https://www.logicdesign.co.uk
-* Version: 1.0.4
+* Version: 1.0.5
 */
 
 require_once __DIR__ . '/updater/boot.php';
