@@ -18,7 +18,7 @@
 
 ### Install Guide
 
-Access your server (e.g. via FTP) and create a folder within your wp-content/plugins directory for ```/logic-google-news/``` and extract the latest release. 
+Access your server (e.g. via FTP) and create a folder within your wp-content/plugins directory for ```/logic-migrate-blog/``` and extract the latest release. 
 
 Via the WordPress dashboard, navigate to plugins and activate the Migrate Blog Posts plugin. 
 
