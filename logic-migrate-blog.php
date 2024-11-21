@@ -26,7 +26,7 @@ class LogicBlogMigration
 		add_action('wp_ajax_lbm_test_connect', [$this, 'ajax_test_connection']);
 		add_action('wp_ajax_lbm_import', [$this, 'ajax_import']);
 
-		// $this->domain = 'https://crosscountrycarriers.com';
+		// $this->domain = 'https://_________________.com';
 	}
 
 	public function admin_menu()
