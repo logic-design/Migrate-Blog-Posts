@@ -2,7 +2,7 @@
 /*
 Plugin Name: Migrate Blog Posts
 Description: Migrate selected posts from a remote WordPress site using REST API, with image support and duplicate detection.
-Version: 0.1.2
+Version: 0.1.3
 Author: Logic Design & Consultancy Ltd
 */
 
