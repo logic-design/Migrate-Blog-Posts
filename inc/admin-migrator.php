@@ -4,6 +4,7 @@ function cpm_render_admin_page()
 {
 
 	$remote_url = get_option('cpm_remote_url', '');
+	$username = get_option('cpm_secure_user', '');
 	$secure_token = get_option('cpm_secure_token', '');
 
 	if (empty($remote_url) || empty($secure_token)) {
@@ -11,12 +12,12 @@ function cpm_render_admin_page()
 		return;
 	}
 
-	$result = test_remote_wordpress_connection($remote_url, $secure_token);
-	if (is_wp_error($result)) {
-		echo '<div class="notice notice-error"><p>Error: ' . esc_html($result->get_error_message()) . '</p></div>';
+	$connection_result = test_remote_wordpress_connection($remote_url, $secure_token, $username);
+	if (is_wp_error($connection_result)) {
+		echo '<div class="notice notice-error"><p>Error: ' . esc_html($connection_result->get_error_message()) . '</p></div>';
 		return;
-	} elseif ($result !== true) {
-		echo '<div class="notice notice-error"><p>Error: ' . esc_html($result) . '</p></div>';
+	} elseif ($connection_result !== true) {
+		echo '<div class="notice notice-error"><p>Error: ' . esc_html($connection_result) . '</p></div>';
 		return;
 	} else {
 		echo '<div class="notice notice-success"><p>Connection successful!</p></div>';
@@ -28,6 +29,67 @@ function cpm_render_admin_page()
 		<p>Use this tool to migrate your blog posts.</p>
 		<p style="margin-bottom: 20px"><button id="cpm-fetch-posts" class="button button-primary">Fetch Posts from Source</button></p>
 		<div id="cpm-posts-table-container"></div>
+		<hr>
+		<p style="margin-bottom: 20px">
+			<?php
+			// Check if there are any imported posts
+			$imported_posts = get_posts([
+				'post_type'   => 'post',
+				'meta_key'    => '_original_site_post_id',
+				// 'meta_value'  => '1',
+				// 'numberposts' => 1,
+				'fields'      => 'ids',
+			]);
+			if (!empty($imported_posts)) :
+			?>
+				<button id="cpm-delete-all-imports" class="button button-secondary button-small">Delete All Imports</button>
+			<?php
+			endif;
+			?>
+		</p>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const deleteBtn = document.getElementById('cpm-delete-all-imports');
+				if (deleteBtn) {
+					deleteBtn.addEventListener('click', function(e) {
+						if (!confirm('Are you sure you want to delete all imported posts? This action cannot be undone.')) {
+							e.preventDefault();
+							return false;
+						}
+
+						const container = document.getElementById('cpm-posts-table-container');
+
+						if (container) {
+							container.innerHTML = '<div class="notice notice-warning"><p>Deleting all imported posts...</p></div>';
+						}
+
+						fetch(ajaxurl, {
+								method: 'POST',
+								credentials: 'same-origin',
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+								},
+								body: 'action=cpm_delete_imported_posts'
+							})
+							.then(response => response.json())
+							.then(data => {
+								if (container) {
+									if (data.success) {
+										container.innerHTML = '<div class="notice notice-success"><p>' + (data.data || 'All imported posts deleted.') + '</p></div>';
+									} else {
+										container.innerHTML = '<div class="notice notice-error"><p>' + (data.error || 'Failed to delete imported posts.') + '</p></div>';
+									}
+								}
+							})
+							.catch(() => {
+								if (container) {
+									container.innerHTML = '<div class="notice notice-error"><p>Error deleting imported posts.</p></div>';
+								}
+							});
+					});
+				}
+			});
+		</script>
 	</div>
 
 	<script>

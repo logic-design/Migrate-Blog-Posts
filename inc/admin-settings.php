@@ -1,6 +1,7 @@
 <?php
 
 add_action('admin_init', function () {
+	register_setting('cpm_settings', 'cpm_secure_user');
 	register_setting('cpm_settings', 'cpm_secure_token');
 	register_setting('cpm_settings', 'cpm_remote_url');
 
@@ -10,6 +11,19 @@ add_action('admin_init', function () {
 		null,
 		'custom-post-migrator-settings'
 	);
+
+
+	add_settings_field(
+		'cpm_secure_user',
+		'WordPress Username',
+		function () {
+			$value = esc_attr(get_option('cpm_secure_user', ''));
+			echo "<input type='text' name='cpm_secure_user' value='{$value}' class='regular-text' />";
+		},
+		'custom-post-migrator-settings',
+		'cpm_main_section'
+	);
+
 
 	add_settings_field(
 		'cpm_secure_token',
@@ -53,10 +67,11 @@ function cpm_render_settings_page()
 
 			if (isset($_GET['settings-updated']) && $_GET['settings-updated']) {
 				$remote_url = get_option('cpm_remote_url', '');
+				$secure_user = get_option('cpm_secure_user', '');
 				$secure_token = get_option('cpm_secure_token', '');
 
 				if ($remote_url && $secure_token) {
-					$result = test_remote_wordpress_connection($remote_url, $secure_token);
+					$result = test_remote_wordpress_connection($remote_url, $secure_token, $secure_user);
 
 					if ($result === true) {
 						echo '<div class="notice notice-success"><p>Connection successful!</p></div>';
