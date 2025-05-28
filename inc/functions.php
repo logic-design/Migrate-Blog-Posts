@@ -157,9 +157,10 @@ add_action('wp_ajax_cpm_import_post', function () {
 
 		$featured_img_url = false;
 		if (isset($post_data['featured_media']) && $post_data['featured_media']) {
-			$media_response = wp_remote_get($remote_url . "wp-json/wp/v2/media/" . $post_data['featured_media'], [
+			$media_response = wp_remote_get(trailingslashit(get_option('cpm_remote_url')) . "wp-json/wp/v2/media/" . $post_data['featured_media'], [
 				'headers' => [
-					'Authorization' => 'Bearer ' . $secure_token
+					'Authorization' => 'Basic ' . base64_encode("get_option('cpm_secure_user'):get_option('cpm_secure_token')"),
+					'Content-Type'  => 'application/json',
 				]
 			]);
 
